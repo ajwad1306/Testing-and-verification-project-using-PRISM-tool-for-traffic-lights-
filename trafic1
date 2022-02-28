@@ -1,0 +1,27 @@
+dtmc
+
+module trafficLight
+
+	// local states
+	s : [0..1] init 0;
+	// value of the traffic lights with two colors , 0 red , 1 green
+	a1 : [0..1] init 1;//a1 is first traffic light in the main road
+	b1 : [0..1] init 1;//b1 is second traffic light in the main road
+	a2 : [0..1] init 0;//a2 is first traffic light in the second road
+	b2 : [0..1] init 0;//b2 is second traffic light in the second road
+	time : [0..44] init 0;// total time system
+	time2 : [0..14] init 0;// time for second road green phase
+	y: [1..50] init 1; 
+	 
+	[] s=0 & time<14 -> 1:(s'=0)&(time'=time+1);
+	[] s=0 & time>=14 & time<29  -> 0.5:(s'=0)&(time'=time+1) + 0.5:(s'=1)&(time'=time+1)&(a1'=0)&(b1'=0)&(a2'=1)&(b2'=1);
+	[] s=0 & time=29 -> 1:(s'=1)&(a1'=0)&(b1'=0)&(a2'=1)&(b2'=1)&(time'=time+1)&(time2'=0);
+	[] s=1 & time2<14&time < 44 -> 1:(s'=1)&(time2'=time2+1)&(time'=time+1); 
+	[] s=1 & time2=14 &time<=44 -> 1:(s'=0)&(time'=0)&(a1'=1)&(b1'=1)&(a2'=0)&(b2'=0)&(time2'=0); 
+	
+
+endmodule
+
+rewards "steps"
+	[] y<50 : 1;  
+endrewards
